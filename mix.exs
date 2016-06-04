@@ -14,7 +14,7 @@ defmodule ExfileS3.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:exfile, :ex_aws, :httpoison, :logger]]
   end
 
   # Dependencies can be Hex packages:
@@ -27,6 +27,12 @@ defmodule ExfileS3.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      {:exfile, "~> 0.3.1"},
+      {:ex_aws, "~> 0.4.10"},
+      {:sweet_xml, "~> 0.6.1"},
+      {:httpoison, "~> 0.7"},
+      {:poison, "~> 1.2"}
+    ]
   end
 end

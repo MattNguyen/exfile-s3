@@ -18,3 +18,17 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:exfile_s3]]
         end
 
+  3. Configure the backend in config.exs (or environment equivalent)
+
+        config :exfile, Exfile,
+          backends: %{
+            "store": {ExfileS3.Backend,
+              hasher: Exfile.Hasher.Random,
+              access_key_id: "AWS Access Key Id",
+              secret_access_key: "AWS Secret Access Key",
+              s3_prefix: "bucket prefix",
+              bucket_region: "Bucket Region",
+              cdn_host: "CDN Host",
+              bucket: "Name of the bucket to store files"
+            }
+          }
