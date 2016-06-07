@@ -1,6 +1,6 @@
 # ExfileS3
 
-An AWS S3 adapteer for Exfile, using the ex_aws client library to interface with S3.
+An AWS S3 adapter for [exfile](https://github.com/keichan34/exfile), using the [ex_aws](https://github.com/CargoSense/ex_aws) client library to interface with S3.
 
 ## Installation
 
