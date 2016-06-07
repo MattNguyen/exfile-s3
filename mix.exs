@@ -2,12 +2,32 @@ defmodule ExfileS3.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :exfile_s3,
-     version: "0.0.1",
-     elixir: "~> 1.2",
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps]
+    [
+      app: :exfile_s3,
+      version: "0.0.1",
+      elixir: "~> 1.2",
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      deps: deps,
+      description: description,
+      package: package
+    ]
+  end
+
+  defp description do
+    """
+    An AWS S3 adapteer for Exfile, using the ex_aws client library to interface with S3.
+    """
+  end
+
+  defp package do
+    [
+      name: :exfile_s3,
+      files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+      maintainers: ["Matt Nguyen"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/MattNguyen/exfile-s3"}
+    ]
   end
 
   # Configuration for the OTP application

@@ -1,6 +1,6 @@
 # ExfileS3
 
-**TODO: Add description**
+An AWS S3 adapteer for Exfile, using the ex_aws client library to interface with S3.
 
 ## Installation
 
