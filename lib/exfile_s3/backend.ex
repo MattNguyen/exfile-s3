@@ -5,6 +5,9 @@ defmodule ExfileS3.Backend do
   alias ExfileS3.S3
 
   def init(opts) do
+    _access_key_id     = Keyword.get(opts, :access_key_id)     || raise(ArgumentError, message: "access_key_id is required.")
+    _secret_access_key = Keyword.get(opts, :secret_access_key) || raise(ArgumentError, message: "secret_access_key is required.")
+    _bucket            = Keyword.get(opts, :bucket)            || raise(ArgumentError, message: "bucket is required.")
     {:ok, backend} = super(opts)
     backend
   end
