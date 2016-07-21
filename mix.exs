@@ -4,7 +4,7 @@ defmodule ExfileS3.Mixfile do
   def project do
     [
       app: :exfile_s3,
-      version: "0.0.1",
+      version: "0.0.2",
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -16,7 +16,7 @@ defmodule ExfileS3.Mixfile do
 
   defp description do
     """
-    An AWS S3 adapteer for Exfile, using the ex_aws client library to interface with S3.
+    An AWS S3 adapter for Exfile, using the ex_aws client library to interface with S3.
     """
   end
 
@@ -48,11 +48,11 @@ defmodule ExfileS3.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:exfile, "~> 0.3.1"},
-      {:ex_aws, "~> 0.4.10"},
-      {:sweet_xml, "~> 0.6.1"},
-      {:httpoison, "~> 0.7"},
-      {:poison, "~> 1.2"}
+      {:exfile, "~> 0.3"},
+      {:ex_aws, "~> 0.5"},
+      {:sweet_xml, "~> 0.6"},
+      {:httpoison, "~> 0.8"},
+      {:poison, "~> 1.5 or ~> 2.0"}
     ]
   end
 end
