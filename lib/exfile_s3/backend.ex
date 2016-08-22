@@ -44,7 +44,7 @@ defmodule ExfileS3.Backend do
   def open(backend, file_id) do
     case S3.get_object(S3.find_config_value(:bucket), path(backend, file_id)) do
       {:ok, %{body: body}} ->
-        {:ok, io} = StringIO.open(body)
+        {:ok, io} = File.open(body, [:ram, :binary, :read])
         {:ok, %LocalFile{io: io}}
       {:error, reason} ->
         {:error, reason}
