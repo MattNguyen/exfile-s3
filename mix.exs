@@ -4,13 +4,13 @@ defmodule ExfileS3.Mixfile do
   def project do
     [
       app: :exfile_s3,
-      version: "0.0.2",
+      version: "0.0.3",
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      deps: deps,
-      description: description,
-      package: package
+      deps: deps(),
+      description: description(),
+      package: package()
     ]
   end
 
@@ -48,11 +48,12 @@ defmodule ExfileS3.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:exfile, "~> 0.3"},
-      {:ex_aws, "~> 0.5"},
-      {:sweet_xml, "~> 0.6"},
-      {:httpoison, "~> 0.8"},
-      {:poison, "~> 1.5 or ~> 2.0"}
+      # {:exfile, "~> 0.3"},
+      {:exfile, git: "git@github.com:grabr/exfile.git", branch: "phx-1.3"},
+      {:ex_aws, "~> 0.5 or ~> 1.1", optional: true},
+      {:sweet_xml, "~> 0.6", optional: true},
+      {:httpoison, "~> 0.8", optional: true},
+      {:poison, "~> 1.5 or ~> 2.0 or ~> 3.1", optional: true}
     ]
   end
 end

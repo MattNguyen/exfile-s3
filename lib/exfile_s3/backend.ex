@@ -1,14 +1,13 @@
 defmodule ExfileS3.Backend do
   use Exfile.Backend
 
-  alias Exfile.LocalFile
-  alias ExfileS3.S3
-
   def init(opts) do
-    _access_key_id     = Keyword.get(opts, :access_key_id)     || raise(ArgumentError, message: "access_key_id is required.")
-    _secret_access_key = Keyword.get(opts, :secret_access_key) || raise(ArgumentError, message: "secret_access_key is required.")
-    _bucket            = Keyword.get(opts, :bucket)            || raise(ArgumentError, message: "bucket is required.")
     {:ok, backend} = super(opts)
+    ExfileS3.Config.get(backend, :access_key_id)     || raise(ArgumentError, message: "access_key_id is required.")
+    ExfileS3.Config.get(backend, :secret_access_key) || raise(ArgumentError, message: "secret_access_key is required.")
+    ExfileS3.Config.get(backend, :region)            || raise(ArgumentError, message: "region is required.")
+    ExfileS3.Config.get(backend, :bucket)            || raise(ArgumentError, message: "bucket is required.")
+
     backend
   end
 
@@ -21,11 +20,11 @@ defmodule ExfileS3.Backend do
     end
   end
 
-  def upload(backend, %LocalFile{} = uploadable) do
-    id = backend.hasher.hash(uploadable)
-    case LocalFile.open(uploadable) do
+  def upload(backend, %Exfile.LocalFile{} = uploadable) do
+    file_id = backend.hasher.hash(uploadable)
+    case Exfile.LocalFile.open(uploadable) do
       {:ok, io} ->
-        perform_upload(backend, id, io)
+        perform_upload(backend, file_id, io)
       {:error, reason} ->
         {:error, reason}
     end
@@ -36,27 +35,32 @@ defmodule ExfileS3.Backend do
       {:error, reason} ->
         {:error, reason}
       iodata ->
-        S3.put_object(S3.find_config_value(:bucket), path(backend, file_id), iodata)
+        ExfileS3.Client.put_object(backend, path(backend, file_id), iodata)
         {:ok, get(backend, file_id)}
     end
   end
 
   def open(backend, file_id) do
-    case S3.get_object(S3.find_config_value(:bucket), path(backend, file_id)) do
+    case ExfileS3.Client.get_object(backend, path(backend, file_id)) do
       {:ok, %{body: body}} ->
         {:ok, io} = File.open(body, [:ram, :binary, :read])
-        {:ok, %LocalFile{io: io}}
+        {:ok, %Exfile.LocalFile{io: io}}
       {:error, reason} ->
         {:error, reason}
     end
   end
 
   def delete(backend, file_id) do
-    S3.delete_object(S3.find_config_value(:bucket), path(backend, file_id))
+    case exists?(backend, file_id) do
+      true  ->
+        ExfileS3.Client.delete_object(backend, path(backend, file_id)) |> elem(0)
+      false ->
+        :ok
+    end
   end
 
   def size(backend, file_id) do
-    case S3.head_object(S3.find_config_value(:bucket), path(backend, file_id)) do
+    case ExfileS3.Client.head_object(backend, path(backend, file_id)) do
       {:ok, %{headers: headers}} ->
         {"Content-Length", size} = Enum.find(headers, fn({header_name, _}) -> header_name == "Content-Length" end)
         {size, _} = Integer.parse(size)
@@ -67,14 +71,14 @@ defmodule ExfileS3.Backend do
   end
 
   def exists?(backend, file_id) do
-    case S3.head_object(S3.find_config_value(:bucket), path(backend, file_id)) do
+    case ExfileS3.Client.head_object(backend, path(backend, file_id)) do
       {:ok, _} -> true
       _ -> false
     end
   end
 
-  def path(_backend, id) do
-    [S3.find_config_value(:prefix), id]
+  def path(backend, id) do
+    [backend.backend_name, id]
     |> Enum.reject(&is_empty?/1)
     |> Enum.join("/")
   end
